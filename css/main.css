@@ -5,6 +5,10 @@ body {
     text-align: center;
 }
 
+button:hover{
+    cursor: pointer;
+}
+
 table {
     margin: auto;
 }
@@ -15,4 +19,15 @@ table {
     background-color: blanchedalmond;
     border-radius: 20%;
     color: green
+    
+}
+
+.cell:hover {
+    cursor: pointer;
+    background-color: aliceblue;
+    transition: 400ms;
+}
+
+.smileface:hover {
+    cursor: pointer;
 }
