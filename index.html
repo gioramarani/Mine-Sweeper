@@ -1,34 +1,24 @@
-
 <html>
 
 <head>
 <link rel="stylesheet" href="css/main.css">
 </head>
 
+
 <body onload="onInit()">
-    <h1>Mine Sweeper</h1>
-    <h2>Lets Play!</h2>
-    <div class="choose-level">
-        <h3>Choose Level</h3>
-        <button class="level1" onclick="levelOfGame(1)">Beginner</button>
-        <button class="level2" onclick="levelOfGame(2)">Medium</button>
-        <button class="level3" onclick="levelOfGame(3)">Expert</button>
-<p ><span class="lives-left">3 </span> Lives Left</p> <p class="time" >time <span></span></p>
-<h1 class="smileface" onclick="onInit()"></h1>    
-</div>
-
-    <table>
-        <tbody class="board"></tbody>
-    </table>
-<div class="hints">Hints <span class="hint1" onclick="useHint(this)">💡</span><span class="hint2" onclick="useHint(this)">💡</span><span class="hint3" onclick="useHint(this)">💡</span></div>
-    <div class="modal">
-        <h2 class="user-msg"></h2>
-
+    <div class="timer-container">
+        <div class="Difficult-Level">Difficult Level: <button class="16" onclick="sixTeenCells()">16</button><button class="25" onclick="TwentyFiveCells()">25</button><button class="36" onclick="thirtySix()">36</button></div>
+        <span class="time">Time: <span class="stop-watch"></span> <span class="nextNum">Next Number: </span></span>
+        <table>
+            <tbody>
+    
+            </tbody>
+        </table>
+        
+        
     </div>
 
-<h6> By Giora Marani</h6>
-<script src="js/main.js"></script>
-<script src="js/utils.js"></script>
-</body>
 
+    <script src="js/main.js"></script>
+</body>
 </html>
