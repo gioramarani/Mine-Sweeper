@@ -1,51 +1,46 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+button:hover{
+    cursor: pointer;
+}
+
 table {
-    border: 1px solid black;
-    height: 250px;
-    width: 250px;
-    margin-top: 10px;
-    background-color: yellow;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.timer-container{
-    margin: auto;
-    background-color: purple;
-    height: 340px;
-    width: 300px;
-    color: aliceblue;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-tbody {
-    text-align: center;
-    border: 1px solid black;
     margin: auto;
 }
-td{
-    border: 1px solid black;
-    height: 40px;
+
+.cell {
     width: 40px;
-    padding: 10px;
-}
-
-time {
-    background-color: palevioletred;
-    border: 2px solid pink;
+    height: 40px;
+    background-color: blanchedalmond;
     border-radius: 20%;
+    color: green
+    
 }
 
-nextNum{
-    background-color: palevioletred;
-    border: 2px solid pink;
-    border-radius: 20%;
-   margin-left: 50px;
+.cell:hover {
+    cursor: pointer;
+    background-color: aliceblue;
+    transition: 400ms;
 }
 
-.Difficult-Level{
-    text-align: center;
-    color: aliceblue;
-    margin-left: auto;
-        margin-right: auto;
+.smileface:hover {
+    cursor: pointer;
 }
+
+.shiney {
+    background-color: yellow;
+    box-shadow: -1px -1px 31px 25px #E1F059;
+}
+
+.hints:hover {
+    cursor:grab;
+}
+
+/* .stop-watch{
+
+} */

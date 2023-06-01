@@ -31,3 +31,24 @@ function getRandomInt(min, max) {
   }
 
   
+function startStopWatch() {
+  const startTime = Date.now()//curr time stamp 1231232344543 -> 11L15
+  gInterval = setInterval(function () {
+      const elapsedTime = (Date.now() - startTime) / 1000
+      // console.log('Date.now() - startTime', Date.now() - startTime);
+      // console.log('startTime', startTime);
+      // console.log('Date.now()', Date.now());
+      // console.log('elapesdTime', elapsedTime);
+      // console.log('elapsedTime.toFixed(3)', elapsedTime.toFixed(3));
+
+      gTimer.innerText = elapsedTime.toFixed(3)
+  }, 100)
+  // setTimeout(()=> clearInterval(gInterval), 2000 )
+
+
+}
+
+
+function stopWatch() {
+  clearInterval(gInterval)
+}
