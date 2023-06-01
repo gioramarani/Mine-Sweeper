@@ -1,10 +1,30 @@
 body {
+    /* background-image: url('../img/images.jpeg'); */
+    /* background-repeat: no-repeat; */
+
+    /* background-size: cover; */
     background-color: black;
-    color: white;
+    color: rgb(203, 203, 203);
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
 }
 
+/* h1 {
+    box-shadow: 2px 1px 14px 12px #4444D7;
+} */
+
+.lives-left {
+    margin-right: 10px;
+    /* box-shadow: 2px 1px 14px 12px #4444D7;
+    background-color: black;
+    border-radius: 20px; */
+}
+
+.safe-click{
+    /* border: 10px solid black; */
+    margin-bottom: 15px;
+    
+}
 button:hover{
     cursor: pointer;
 }
@@ -24,7 +44,7 @@ table {
 
 .cell:hover {
     cursor: pointer;
-    background-color: aliceblue;
+    background-color: rgb(222, 206, 23);
     transition: 400ms;
 }
 
@@ -41,6 +61,11 @@ table {
     cursor:grab;
 }
 
-/* .stop-watch{
+button.safe-click{
+    margin-top: 20px;
+}
 
-} */
+.safe{
+    background-color: rgb(5, 251, 251);
+    transition: 800ms;
+}

@@ -8,33 +8,36 @@ var gLevel = {
     LIVES: 2
 }
 
+var gPopup = document.querySelector('.modal')
+var gElSmile = document.querySelector('.smileface')
+var gUserMsg = document.querySelector('.user-msg')
+var gTimer = document.querySelector('.stop-watch span')
+var gElLives = document.querySelector('.lives-left span')
+var gRestartFace = document.querySelector('.restart-button')
+var gBestScore = document.querySelector('.best-scores span')
+var gBestScoreTitle = document.querySelector('.best-scores')
+var elSafeClickLeft = document.querySelector('.safe-click span')
+var gElMinesLeftToPlace = document.querySelector('.mines-left span')
+var gElMinesLeftToPlaceTitle = document.querySelector('.mines-left')
+var gManualBoard = []
+var gManualMode = false
+var gUseHint = false
+var gElLightBolb
+var gInterval
+var gIsTimeRunning
+var gMinesLeftToPlaceCountDown
+localStorage.bestScoreLevel1 = Infinity
+localStorage.bestScoreLevel2 = Infinity
+localStorage.bestScoreLevel3 = Infinity
+gBestScore.innerText = localStorage.bestScoreLevel1
+
+
 const BOMB = '💣'
 const FLAG = '🚩'
 const NORMALFACE = '😊'
 const WINNINGFACE = '🤩'
 const LOSINGFACE = '🥴'
-
-var gElSmile = document.querySelector('.smileface')
-var gPopup = document.querySelector('.modal')
-var gRestartFace = document.querySelector('.restart-button')
-var gUserMsg = document.querySelector('.user-msg')
-var gBombsRevealedCount = 0
-var gElLives = document.querySelector('.lives-left span')
-var gFlags = 0
-var gOpenCells = 0
-var gUseHint = false
-var gElLightBolb
-var gInterval
-var gTimer = document.querySelector('.stop-watch span')
-var gBestScore = document.querySelector('.best-scores span')
-var gBestScoreTitle = document.querySelector('.best-scores')
-localStorage.bestScoreLevel1 = Infinity
-localStorage.bestScoreLevel2 = Infinity
-localStorage.bestScoreLevel3 = Infinity
-gBestScore.innerText = localStorage.bestScoreLevel1
-// gBestScore
-var gIsTimeRunning
-
+const SAFE = '🛟'
 
 
 // starts the game
@@ -42,25 +45,28 @@ function onInit() {
     stopWatch()
     gIsTimeRunning = false
     gBoard = buildBoard()
-    gBombsRevealedCount = 0
-    gFlags = 0
-    gOpenCells = 0
-    gElSmile.innerText = NORMALFACE
-    gTimer.innerText = '0.000'
-    gPopup.style.display = 'none'
     gGame = {
         isOn: true,
         shownCount: 0,
         markedCount: 0,
-        secsPassed: 0
+        bombsRevealedCount: 0,
+        safeClickLeftCount: 3
     }
     if (+gBestScore.innerText === Infinity) {
         gBestScoreTitle.style.display = 'none'
-    } else{
+    } else {
         gBestScoreTitle.style.display = 'block'
     }
-    renderBoard(gBoard)
+
+    elSafeClickLeft.innerText = gGame.safeClickLeftCount
+    gElSmile.innerText = NORMALFACE
+    gTimer.innerText = '0.000'
+    gPopup.style.display = 'none'
+    gElMinesLeftToPlaceTitle.style.display = 'none'
+    // gElLightBolb.style.display = 'block'
+
     gElLives.innerText = gLevel.LIVES
+    renderBoard(gBoard)
 }
 
 function buildBoard() {
@@ -80,6 +86,7 @@ function buildBoard() {
             board[i][j] = cell
         }
     }
+  
     createMines(board)
     console.table(board)
     setMinesNegsCount(board)
@@ -88,12 +95,21 @@ function buildBoard() {
 }
 
 function createMines(board) {
+   
     for (var x = 0; x < gLevel.MINES; x++) {
-
+        console.log(gManualMode)
+        if(gManualMode) {
+            console.log(gManualBoard)
+         var manualCell = gManualBoard.splice(0,1)
+         console.log(manualCell)
+         manualCell.isMine = true
+        } else{
         var randEmptyCell = getRandomEmptyCell(board)
         console.log(randEmptyCell)
         randEmptyCell.isMine = true
     }
+    }
+gManualMode = false
 }
 
 function getRandomEmptyCell(board) {
@@ -172,7 +188,10 @@ function renderBoard(board) {
 }
 
 function onCellClicked(elCell, i, j) {
-
+    if(gManualMode) {
+        userPositionMines(elCell, i, j)  
+        return
+    }
     if (!gIsTimeRunning) {
         startStopWatch()
         gIsTimeRunning = true
@@ -193,16 +212,16 @@ function onCellClicked(elCell, i, j) {
     if (gBoard[i][j].isShown) return
     if (gBoard[i][j].isMarked) return
     if (gBoard[i][j].isMine) {
-        if (!gOpenCells) return
+        if (!gGame.shownCount) return
         elCell.innerText = BOMB
         console.log(gBoard[i][j])
-        gBombsRevealedCount++
-        console.log('bombsRevealed', gBombsRevealedCount)
+        gGame.bombsRevealedCount++
+        console.log('bombsRevealed', gGame.bombsRevealedCount)
         decreaseLivesLeft()
         checkGameOver()
     } else {
         elCell.innerText = gBoard[i][j].minesAroundCount
-        gOpenCells++
+        gGame.shownCount++
         checkVictory()
         if (!gBoard[i][j].minesAroundCount) { //if there are no mines around him
             revealFirstDegNegs(i, j)
@@ -214,25 +233,27 @@ function onCellClicked(elCell, i, j) {
 }
 
 function onCellMarked(elCell, i, j) {
-    if (gBoard[i][j].isShown) return
-    if (elCell.innerText === FLAG) {
-        elCell.innerText = ''
-        gBoard[i][j].isMarked = false
-        gFlags--
-    } else {
-        elCell.innerText = FLAG
-        gBoard[i][j].isMarked = true
-        gFlags++
-        console.log(gFlags)
-        checkVictory()
-    }
+    
     if (!gIsTimeRunning) {
         startStopWatch()
         gIsTimeRunning = true
     }
+    if (gBoard[i][j].isShown) return
+    if (elCell.innerText === FLAG) {
+        elCell.innerText = ''
+        gBoard[i][j].isMarked = false
+        gGame.markedCount--
+    } else {
+        elCell.innerText = FLAG
+        gBoard[i][j].isMarked = true
+        gGame.markedCount++
+        console.log(gGame.markedCount)
+        checkVictory()
+    }
 }
 
 function revealFirstDegNegs(idxi, idxj) {
+
     for (var i = idxi - 1; i <= idxi + 1; i++) {
         if (i < 0 || i >= gLevel.SIZE) continue;
         for (var j = idxj - 1; j <= idxj + 1; j++) {
@@ -241,21 +262,22 @@ function revealFirstDegNegs(idxi, idxj) {
             var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
             elCell.innerText = gBoard[i][j].minesAroundCount
             if (!gUseHint) {
-                if (!gBoard[i][j].isShown) gOpenCells++
+                if (!gBoard[i][j].isShown) gGame.shownCount++
                 gBoard[i][j].isShown = true
-                // if(!gBoard[i][j].minesAroundCount) revealFirstDegNegs(i,j)
+                // if(!gBoard[i][j].minesAroundCount) revealFirstDegNegs(i,j) //  why not workiong as a recursion?
             }
             // console.log(gOpenCells)
-        }//remeber to count each one that openned up if it wasnt open already
+        }
     }
 }
+
 function decreaseLivesLeft() {
-    gElLives.innerText = gLevel.LIVES - gBombsRevealedCount
+    gElLives.innerText = gLevel.LIVES - gGame.bombsRevealedCount
 }
 
 function checkVictory() {
-    // When easy Level Need To change something...
-    if (gFlags + gBombsRevealedCount === gLevel.MINES && gOpenCells === (gLevel.SIZE ** 2) - gLevel.MINES) {
+
+    if (gGame.markedCount + gGame.bombsRevealedCount === gLevel.MINES && gGame.shownCount === (gLevel.SIZE ** 2) - gLevel.MINES) {
         // console.log('gflags', gFlags)
         // console.log('gbombsrevealed', gBombsRevealedCount)
         // console.log('glevel.mines', gLevel.MINES)
@@ -263,18 +285,18 @@ function checkVictory() {
         // console.log('glelvel.size**2', gLevel.SIZE ** 2)
         // console.log('glevel.mines', gLevel.MINES)
         gElSmile.innerText = WINNINGFACE
-        stopWatch()
-        // gBestScore.innerText = gTimer.innerText
         checkForBestScore(gLevel.LIVES - 1)
+        stopWatch()
         gPopup.style.display = 'block'
         gUserMsg.innerText = 'You Won!!'
         gGame.isOn = false
         gIsTimeRunning = false
+        gManualMode = false
     }
 }
 
 function checkGameOver() {
-    if (gBombsRevealedCount === gLevel.LIVES) {
+    if (gGame.bombsRevealedCount === gLevel.LIVES) {
         var elCellsWithMine = []
         elCellsWithMine.push(...document.querySelectorAll('.mine'))
         console.log(elCellsWithMine)
@@ -287,6 +309,7 @@ function checkGameOver() {
         gUserMsg.innerText = 'Game Over..  Try Again!'
         gGame.isOn = false
         gIsTimeRunning = false
+        gManualMode = false
 
     }
 }
@@ -320,6 +343,7 @@ function levelOfGame(num) {
 }
 
 function useHint(ev) {
+    if(!gGame.isOn) return
     gElLightBolb = ev
     gElLightBolb.classList.add('shiney')
     gUseHint = true
@@ -330,7 +354,6 @@ function finishHint(elCell, i, j) {
     hideFirstDegNegs(i, j)
     gUseHint = false
     gElLightBolb.style.display = 'none'
-
 }
 
 function hideFirstDegNegs(idxi, idxj) {
@@ -349,6 +372,7 @@ function hideFirstDegNegs(idxi, idxj) {
 function checkForBestScore(level) {
     var currTime = gTimer.innerText
     console.log(currTime)
+    
     // Stroe
     if (level === 1) {
         console.log(localStorage.bestScoreLevel1)
@@ -376,3 +400,49 @@ function checkForBestScore(level) {
     console.log('hello')
 
 }
+
+function safeClickClicked(){
+    if(!gGame.safeClickLeftCount) return
+    if(!gGame.isOn) return
+    gGame.safeClickLeftCount--
+    elSafeClickLeft.innerText = gGame.safeClickLeftCount
+    var safeCell = getRandomEmptyCell(gBoard)
+    // console.log(safeCell.i, safeCell.j)
+    // console.log(gBoard[safeCell.i][safeCell.j])
+    var elSafeCell = document.querySelector(`[data-i="${safeCell.i}"][data-j="${safeCell.j}"]`)
+    console.log(elSafeCell)
+    elSafeCell.classList.add('safe')
+
+}
+
+// function manualPositionMinesOn(){
+//     if(gGame.shownCount) return
+//    gManualMode = true
+//    console.log(gManualMode)
+//    gElMinesLeftToPlaceTitle.style.display = 'block'
+//    gMinesLeftToPlaceCountDown = gLevel.MINES
+   
+//    gElMinesLeftToPlace.innerText = gMinesLeftToPlaceCountDown
+// //    if(!gMinesLeftToPlaceCountDown){
+// // }
+// }
+
+// function userPositionMines(elCell, idxi, idxj){
+    
+//     if(gMinesLeftToPlaceCountDown === 0){
+//         console.log('finish placing bombs')
+//         setMinesNegsCount(gBoard)
+//         renderBoard(gBoard)
+//        gManualMode = !gManualMode
+        
+//     } else{
+//     elCell.innerText = BOMB
+//     gBoard[idxi][idxj].isMine = true
+//     console.log(elCell)
+//     console.log(gBoard[idxi][idxj])
+//     gManualBoard.push(gBoard[idxi][idxj])
+//     console.log(gManualBoard)
+//     gMinesLeftToPlaceCountDown--
+//     gElMinesLeftToPlace.innerText = gMinesLeftToPlaceCountDown
+// }
+// }

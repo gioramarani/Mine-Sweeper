@@ -13,7 +13,9 @@
         <button class="level1" onclick="levelOfGame(1)">Beginner</button>
         <button class="level2" onclick="levelOfGame(2)">Medium</button>
         <button class="level3" onclick="levelOfGame(3)">Expert</button>
-<p class="lives-left"><span >2 </span> Lives Left</p> <p class="stop-watch" >time <span></span></p>
+        <div > <button class="safe-click" onclick="safeClickClicked()">Safe Click</button>
+        <span class="safe-click"> <span></span> Clicks Left</span></div>
+<span class="lives-left"><span >2 </span> Lives Left</span> <span class="stop-watch" >Time <span></span></span>
 <h1 class="smileface" onclick="onInit()"></h1>    
 </div>
 
@@ -21,9 +23,11 @@
         <tbody class="board"></tbody>
     </table>
     <div class="hints">Hints <span class="hint1" onclick="useHint(this)">💡</span><span class="hint2" onclick="useHint(this)">💡</span><span class="hint3" onclick="useHint(this)">💡</span></div>
+    <!-- <button class="manual-position-mines" onclick="manualPositionMinesOn()">Manual Position Mines</button> -->
+    <div class="mines-left"><span></span> Mines Left To Place</div>
     <div class="modal">
-        <h2 class="user-msg"></h2>
-        
+    <h2 class="user-msg"></h2>
+    
     </div>
     <div class="best-scores">Your Best Score Is: <span></span></div>
 
