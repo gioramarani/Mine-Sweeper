@@ -20,6 +20,8 @@ var gUserMsg = document.querySelector('.user-msg')
 var gBombsRevealedCount = 0
 var gFlags = 0
 var gOpenCells = 0
+var gUseHint = false
+var gElLightBolb
 
 
 // starts the game
@@ -153,27 +155,40 @@ function renderBoard(board) {
 }
 
 function onCellClicked(elCell, i, j) {
-    if (gBoard[i][j].isMarked) return
-    if (gBoard[i][j].isShown) return
     // if(gFirstClick)  // Paradox! How will it know to count how many mines are around if there arent any?///
     // createMines(gBoard)
     // console.table(gBoard)
     // setMinesNegsCount(gBoard)
-
+    if(gUseHint){
+        if (gBoard[i][j].isMine) {
+            elCell.innerText = BOMB
+            revealFirstDegNegs(i, j)
+            setTimeout(finishHint, 1000, elCell, i, j)
+            return
+        } else{
+            elCell.innerText = gBoard[i][j].minesAroundCount
+            revealFirstDegNegs(i, j)
+            setTimeout(finishHint, 1000, elCell, i, j)
+        return
+    }
+}
+    if (gBoard[i][j].isShown) return
+    if (gBoard[i][j].isMarked) return
     if (gBoard[i][j].isMine) {
         elCell.innerText = BOMB
         console.log(gBoard[i][j])
         gBombsRevealedCount++
+        console.log('bombsRevealed', gBombsRevealedCount)
         decreaseLivesLeft()
         checkGameOver()
     } else {
         elCell.innerText = gBoard[i][j].minesAroundCount
         gOpenCells++
-        console.log(gOpenCells)
         checkVictory()
         if (!gBoard[i][j].minesAroundCount) { //if there are no mines around him
             revealFirstDegNegs(i, j)
         }
+        console.log(gOpenCells)
     }
     gBoard[i][j].isShown = true
     // console.log(gBoard[i][j])
@@ -202,9 +217,11 @@ function revealFirstDegNegs(idxi, idxj) {
             if (i === idxi && j === idxj) continue;
             var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
             elCell.innerText = gBoard[i][j].minesAroundCount
+            if(!gUseHint){
             if (!gBoard[i][j].isShown) gOpenCells++
             gBoard[i][j].isShown = true
-            console.log(gOpenCells)
+            }
+            // console.log(gOpenCells)
         }//remeber to count each one that openned up if it wasnt open already
     }
 } 
@@ -260,3 +277,30 @@ function levelOfGame(num) {
         // console.log(gLevel)
     } onInit()
 }
+
+function useHint(ev){
+    gElLightBolb = ev
+    gElLightBolb.classList.add('shiney')
+    gUseHint = true 
+}
+
+function finishHint(elCell, i, j){
+    elCell.innerText = ''
+    hideFirstDegNegs(i, j)
+    gUseHint = false
+    gElLightBolb.style.display = 'none'
+
+}
+
+function hideFirstDegNegs(idxi, idxj) {
+    for (var i = idxi - 1; i <= idxi + 1; i++) {
+        if (i < 0 || i >= gLevel.SIZE) continue;
+        for (var j = idxj - 1; j <= idxj + 1; j++) {
+            if (j < 0 || j >= gLevel.SIZE) continue;
+            if (i === idxi && j === idxj) continue;
+            var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+            elCell.innerText = ''
+            // console.log(gOpenCells)
+        }//remeber to count each one that openned up if it wasnt open already
+    }
+} 

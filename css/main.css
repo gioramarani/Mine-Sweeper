@@ -31,3 +31,12 @@ table {
 .smileface:hover {
     cursor: pointer;
 }
+
+.shiney {
+    background-color: yellow;
+    box-shadow: -1px -1px 31px 25px #E1F059;
+}
+
+.hints:hover {
+    cursor:grab;
+}
